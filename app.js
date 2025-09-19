@@ -361,15 +361,14 @@ let installPromptShown = false;
 function initializePWAInstall() {
     // 監聽 beforeinstallprompt 事件
     window.addEventListener('beforeinstallprompt', (e) => {
+        console.log('beforeinstallprompt event fired');
         e.preventDefault();
         deferredPrompt = e;
         
-        // 延遲顯示安裝提示，讓用戶先體驗應用
-        setTimeout(() => {
-            if (!installPromptShown && !localStorage.getItem('installPromptDismissed')) {
-                showInstallPrompt();
-            }
-        }, 10000); // 10秒後顯示
+        // 立即顯示安裝提示
+        if (!installPromptShown && !localStorage.getItem('installPromptDismissed')) {
+            showInstallPrompt();
+        }
     });
 
     // 監聽應用安裝事件
@@ -386,6 +385,11 @@ function initializePWAInstall() {
         return;
     }
 
+    // 檢查瀏覽器支援
+    if ('serviceWorker' in navigator && 'PushManager' in window) {
+        console.log('PWA features supported');
+    }
+
     // 如果用戶之前沒有拒絕，且沒有安裝，顯示手動安裝指南
     if (!localStorage.getItem('installPromptDismissed') && 
         !localStorage.getItem('pwaInstalled')) {
@@ -393,7 +397,7 @@ function initializePWAInstall() {
             if (!installPromptShown) {
                 showManualInstallGuide();
             }
-        }, 15000); // 15秒後顯示手動指南
+        }, 5000); // 5秒後顯示手動指南
     }
 }
 
