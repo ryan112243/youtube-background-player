@@ -365,10 +365,12 @@ function initializePWAInstall() {
         e.preventDefault();
         deferredPrompt = e;
         
-        // 立即顯示安裝提示
-        if (!installPromptShown && !localStorage.getItem('installPromptDismissed')) {
-            showInstallPrompt();
-        }
+        // 延遲一點時間再顯示安裝提示，讓用戶先體驗應用
+        setTimeout(() => {
+            if (!installPromptShown && !localStorage.getItem('installPromptDismissed')) {
+                showInstallPrompt();
+            }
+        }, 3000); // 3秒後顯示
     });
 
     // 監聽應用安裝事件
@@ -376,6 +378,7 @@ function initializePWAInstall() {
         console.log('PWA was installed');
         hideInstallPrompt();
         localStorage.setItem('pwaInstalled', 'true');
+        deferredPrompt = null;
     });
 
     // 檢查是否已經安裝
@@ -394,10 +397,10 @@ function initializePWAInstall() {
     if (!localStorage.getItem('installPromptDismissed') && 
         !localStorage.getItem('pwaInstalled')) {
         setTimeout(() => {
-            if (!installPromptShown) {
+            if (!installPromptShown && !deferredPrompt) {
                 showManualInstallGuide();
             }
-        }, 5000); // 5秒後顯示手動指南
+        }, 8000); // 8秒後顯示手動指南
     }
 }
 
@@ -546,14 +549,29 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Service Worker 註冊（用於 PWA）
+// Service Worker 註冊
 if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js')
-            .then((registration) => {
-                console.log('Service Worker 註冊成功:', registration.scope);
-            })
-            .catch((error) => {
-                console.log('Service Worker 註冊失敗:', error);
+    window.addEventListener('load', async () => {
+        try {
+            const registration = await navigator.serviceWorker.register('./sw.js');
+            console.log('Service Worker 註冊成功:', registration.scope);
+            
+            // 等待 Service Worker 啟用
+            if (registration.installing) {
+                console.log('Service Worker 安裝中...');
+            } else if (registration.waiting) {
+                console.log('Service Worker 等待中...');
+            } else if (registration.active) {
+                console.log('Service Worker 已啟用');
+            }
+            
+            // 監聽 Service Worker 更新
+            registration.addEventListener('updatefound', () => {
+                console.log('發現 Service Worker 更新');
             });
+            
+        } catch (error) {
+            console.error('Service Worker 註冊失敗:', error);
+        }
     });
 }

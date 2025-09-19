@@ -1,12 +1,11 @@
 // Service Worker for YouTube Background Player
-const CACHE_NAME = 'youtube-bg-player-v1';
+const CACHE_NAME = 'youtube-bg-player-v3';
 const urlsToCache = [
   './',
   './index.html',
   './app.js',
   './manifest.json',
-  './icon-192.png',
-  './icon-512.png'
+  './icon-192.png'
 ];
 
 // 安裝 Service Worker
@@ -16,10 +15,15 @@ self.addEventListener('install', (event) => {
     caches.open(CACHE_NAME)
       .then((cache) => {
         console.log('快取已開啟');
-        return cache.addAll(urlsToCache.filter(url => url !== './icon-192.png' && url !== './icon-512.png'));
+        return cache.addAll(urlsToCache);
+      })
+      .then(() => {
+        console.log('所有檔案已快取');
+        // 強制啟用新的 Service Worker
+        return self.skipWaiting();
       })
       .catch((error) => {
-        console.log('快取失敗:', error);
+        console.error('快取失敗:', error);
       })
   );
 });
@@ -28,16 +32,21 @@ self.addEventListener('install', (event) => {
 self.addEventListener('activate', (event) => {
   console.log('Service Worker 已啟用');
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            console.log('刪除舊快取:', cacheName);
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    })
+    Promise.all([
+      // 清理舊快取
+      caches.keys().then((cacheNames) => {
+        return Promise.all(
+          cacheNames.map((cacheName) => {
+            if (cacheName !== CACHE_NAME) {
+              console.log('刪除舊快取:', cacheName);
+              return caches.delete(cacheName);
+            }
+          })
+        );
+      }),
+      // 立即控制所有客戶端
+      self.clients.claim()
+    ])
   );
 });
 
