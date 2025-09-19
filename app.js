@@ -362,30 +362,3 @@ document.addEventListener('DOMContentLoaded', () => {
         showError('請在 app.js 中設定您的 YouTube API Key 以使用完整功能');
     }
 });
-
-// Service Worker 註冊（用於 PWA）
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', async () => {
-        try {
-            const registration = await navigator.serviceWorker.register('./sw.js');
-            console.log('Service Worker 註冊成功:', registration.scope);
-            
-            // 等待 Service Worker 啟用
-            if (registration.installing) {
-                console.log('Service Worker 安裝中...');
-            } else if (registration.waiting) {
-                console.log('Service Worker 等待中...');
-            } else if (registration.active) {
-                console.log('Service Worker 已啟用');
-            }
-            
-            // 監聽 Service Worker 更新
-            registration.addEventListener('updatefound', () => {
-                console.log('發現 Service Worker 更新');
-            });
-            
-        } catch (error) {
-            console.error('Service Worker 註冊失敗:', error);
-        }
-    });
-}

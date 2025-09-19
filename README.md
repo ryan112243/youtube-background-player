@@ -11,46 +11,12 @@
 - 🌙 **優雅介面**: 現代化的深色主題設計
 - ⚡ **輕量快速**: 純前端實現，載入速度快
 
-## 安裝與使用
+## 使用說明
 
-### 1. 下載專案
-
-```bash
-git clone https://github.com/yourusername/youtube-background-player.git
-cd youtube-background-player
-```
-
-### 2. 啟動本地服務器
-
-#### 使用 Python (推薦)
-```bash
-# Python 3
-python -m http.server 8000
-
-# Python 2
-python -m SimpleHTTPServer 8000
-```
-
-#### 使用 Node.js
-```bash
-npx http-server -p 8000
-```
-
-#### 使用 PHP
-```bash
-php -S localhost:8000
-```
-
-### 3. 開啟瀏覽器
-
-在瀏覽器中訪問：`http://localhost:8000`
-
-## 🎯 使用說明
-
-1. **搜尋音樂**: 在搜尋框中輸入歌曲名稱或藝人名稱
-2. **選擇播放**: 點擊搜尋結果中的任一項目開始播放
-3. **控制播放**: 使用播放器控制項調節音量、進度等
-4. **背景播放**: 在手機上可以切換到其他應用程式，音樂會繼續播放
+1. 開啟 `index.html` 文件
+2. 在搜索框中輸入歌曲名稱或藝術家
+3. 點擊搜索結果中的歌曲開始播放
+4. 使用播放控制按鈕控制音樂播放
 
 ## 🛠️ 技術架構
 
@@ -66,9 +32,6 @@ php -S localhost:8000
 youtube-background-player/
 ├── index.html          # 主頁面
 ├── app.js             # 主要應用邏輯
-├── sw.js              # Service Worker
-├── pwabuilder-sw.js   # PWA Builder Service Worker
-├── manifest.json      # Web App Manifest
 ├── icon-192.png       # 應用圖標 (192x192)
 ├── icon-512.png       # 應用圖標 (512x512)
 └── README.md          # 說明文件
