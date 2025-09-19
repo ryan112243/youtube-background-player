@@ -308,6 +308,214 @@
         .hidden {
             display: none !important;
         }
+
+        /* PWA 安裝提示樣式 */
+        .install-prompt {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 1000;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+        }
+
+        .install-content {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: #333;
+        }
+
+        .install-icon {
+            font-size: 2rem;
+            flex-shrink: 0;
+        }
+
+        .install-text {
+            flex: 1;
+        }
+
+        .install-text h3 {
+            margin: 0 0 5px 0;
+            font-size: 1.1rem;
+            color: #333;
+        }
+
+        .install-text p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .install-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .install-btn {
+            background: #ff0000;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .install-btn:hover {
+            background: #cc0000;
+        }
+
+        .dismiss-btn {
+            background: transparent;
+            color: #666;
+            border: 1px solid #ddd;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .dismiss-btn:hover {
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        /* 安裝指南樣式 */
+        .install-guide {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            margin-top: 15px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .guide-header {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            cursor: pointer;
+            transition: background 0.3s;
+            gap: 10px;
+        }
+
+        .guide-header:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .guide-icon {
+            font-size: 1.2rem;
+        }
+
+        .guide-toggle {
+            margin-left: auto;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .guide-toggle.expanded {
+            transform: rotate(180deg);
+        }
+
+        .guide-content {
+            padding: 0 15px 15px 15px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .guide-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .guide-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .step-number {
+            width: 30px;
+            height: 30px;
+            background: #ff0000;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .step-text {
+            flex: 1;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .step-text strong {
+            color: #fff;
+        }
+
+        @media (max-width: 768px) {
+            .install-prompt {
+                bottom: 10px;
+                left: 10px;
+                right: 10px;
+            }
+            
+            .install-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+            
+            .install-buttons {
+                flex-direction: row;
+                justify-content: center;
+                width: 100%;
+            }
+            
+            .install-btn, .dismiss-btn {
+                flex: 1;
+            }
+        }
     </style>
 </head>
 <body>
@@ -317,10 +525,59 @@
             <p>享受不間斷的音樂體驗</p>
         </div>
 
+        <!-- PWA 安裝提示 -->
+        <div class="install-prompt" id="installPrompt" style="display: none;">
+            <div class="install-content">
+                <div class="install-icon">📱</div>
+                <div class="install-text">
+                    <h3>安裝到桌面</h3>
+                    <p>將此應用安裝到您的手機桌面，享受更好的使用體驗！</p>
+                </div>
+                <div class="install-buttons">
+                    <button class="install-btn" id="installBtn">安裝應用</button>
+                    <button class="dismiss-btn" id="dismissBtn">稍後再說</button>
+                </div>
+            </div>
+        </div>
+
         <div class="search-container">
             <div class="search-box">
                 <input type="text" class="search-input" placeholder="搜尋歌曲、藝人或影片..." id="searchInput">
                 <button class="search-btn" id="searchBtn">🔍 搜尋</button>
+            </div>
+            
+            <!-- 手動安裝指南 -->
+            <div class="install-guide" id="installGuide">
+                <div class="guide-header">
+                    <span class="guide-icon">📲</span>
+                    <span>安裝到桌面</span>
+                    <button class="guide-toggle" id="guideToggle">▼</button>
+                </div>
+                <div class="guide-content" id="guideContent" style="display: none;">
+                    <div class="guide-steps">
+                        <div class="guide-step">
+                            <div class="step-number">1</div>
+                            <div class="step-text">
+                                <strong>Android Chrome:</strong><br>
+                                點擊瀏覽器選單 → "加入主畫面"
+                            </div>
+                        </div>
+                        <div class="guide-step">
+                            <div class="step-number">2</div>
+                            <div class="step-text">
+                                <strong>iPhone Safari:</strong><br>
+                                點擊分享按鈕 → "加入主畫面"
+                            </div>
+                        </div>
+                        <div class="guide-step">
+                            <div class="step-number">3</div>
+                            <div class="step-text">
+                                <strong>桌面瀏覽器:</strong><br>
+                                網址列右側會出現安裝圖示
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
