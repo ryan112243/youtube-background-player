@@ -134,6 +134,11 @@
             transform: scale(1.1);
         }
 
+        .control-btn.active {
+            background: #ff0000;
+            box-shadow: 0 0 0 3px rgba(255,0,0,0.3);
+        }
+
         .play-btn {
             width: 80px;
             height: 80px;
@@ -248,6 +253,99 @@
             font-size: 1.1rem;
         }
 
+        /* 候播清單樣式 */
+        .queue-container {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            display: none;
+        }
+
+        .queue-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .queue-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .queue-item {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 10px;
+        }
+
+        .queue-item img {
+            width: 80px;
+            height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .queue-title {
+            font-weight: bold;
+        }
+
+        .clear-queue-btn {
+            padding: 8px 12px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .clear-queue-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .add-queue-btn {
+            padding: 8px 12px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        .add-queue-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* 拖曳排序狀態樣式 */
+        .queue-item.dragging {
+            opacity: 0.6;
+        }
+        .queue-item.drag-over {
+            outline: 2px dashed rgba(255,255,255,0.7);
+        }
+
+        /* 候播清單刪除按鈕 */
+        .remove-queue-btn {
+            margin-left: auto;
+            padding: 6px 10px;
+            background: rgba(255,80,80,0.25);
+            color: #ffd6d6;
+            border: 1px solid rgba(255,80,80,0.45);
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .remove-queue-btn:hover {
+            background: rgba(255,80,80,0.35);
+        }
+
         .error {
             background: rgba(255,0,0,0.2);
             border: 1px solid rgba(255,0,0,0.5);
@@ -336,6 +434,7 @@
                 <button class="control-btn" id="prevBtn">⏮️</button>
                 <button class="control-btn play-btn" id="playBtn">▶️</button>
                 <button class="control-btn" id="nextBtn">⏭️</button>
+                <button class="control-btn" id="loopBtn" title="循環播放">🔁</button>
             </div>
 
             <div class="progress-container">
@@ -359,10 +458,18 @@
             <h3>搜尋結果</h3>
             <div id="resultsList"></div>
         </div>
+
+        <div class="queue-container" id="queueContainer">
+            <div class="queue-header">
+                <div>候播清單（<span id="queueCount">0</span>）</div>
+                <button class="clear-queue-btn" id="clearQueueBtn">清空</button>
+            </div>
+            <div class="queue-list" id="queueList"></div>
+        </div>
     </div>
 
-    <!-- 隱藏的 YouTube 播放器 -->
-    <div id="youtubePlayer" style="display: none;"></div>
+    <!-- 隱藏但可播放的 YouTube 播放器（避免 display:none） -->
+    <div id="youtubePlayer" style="position: fixed; width: 1px; height: 1px; opacity: 0; pointer-events: none; left: -9999px; top: -9999px;"></div>
 
     <script src="https://www.youtube.com/iframe_api"></script>
     <script src="app.js"></script>
